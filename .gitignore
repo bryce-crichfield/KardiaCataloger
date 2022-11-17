@@ -1,0 +1,13 @@
+/.bloop
+/.bsp
+/.metals
+/.scalafmt.conf
+/.vscode
+/project
+/target
+/exc
+/.VSCodeCounter
+/resource
+/examples
+/build
+/tessdata
