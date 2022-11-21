@@ -1,1 +1,1 @@
-![alt text](https://github.com/[bryce-crichfield]/[card_scanner]/blob/[master]/example_out.png?raw=true)
+![alt text](https://github.com/bryce-crichfield/card_scanner/blob/master/example_out.png)
