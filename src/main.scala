@@ -45,19 +45,3 @@ object Main extends SwingApplication {
     morpholizer.close()
   }
 }
-
-
-// object StringTests extends App {
-//   val distance = new LevenshteinDistance()
-//   val test = "spirit of the harft"
-//   val truth = "Spirit of the Harp"
-//   def time(operation: => Unit, msg: String, runs: Int): Unit = {
-//     val start = System.nanoTime()
-//     for (_ <- 0 until runs) {
-//       operation
-//     }
-//     val average = (System.nanoTime() - start) / runs.toDouble
-//     println(f"${msg}:\t${average / 1e6}ms")
-//   }
-//   time(distance.apply(test, truth), "LSN Distance", 25)
-// }

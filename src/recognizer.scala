@@ -16,7 +16,8 @@ class Recognizer(video_feed: VideoFeed, database: Database) {
   private val alpha: Array[Char] = "abcdefghijklmnopqrstuvwxyz-' ".toCharArray()
   val tesseract = new Tesseract()
   tesseract.setDatapath("tessdata")
-  var output: String = ""
+  var output_recognize: String = ""
+  var output_database: String = ""
 
   def recognize(): Unit = {
     video_feed { image =>
@@ -28,8 +29,8 @@ class Recognizer(video_feed: VideoFeed, database: Database) {
           alpha.contains(char)
         }
         .mkString
-      output = clean
-      println(f"Closest Match = ${database.find(output)}")
+      output_recognize = clean
+      output_database = database.find(clean)
     }
   }
 }
@@ -43,16 +44,31 @@ class RecognizerPanel(recognizer: Recognizer)
     }
   }
 
-  val label_output = new Label {
+  val label_output_recognize = new Label {
     background = new java.awt.Color(0x33, 0x33, 0x33)
     preferredSize = new Dimension(250, 100)
     new Timer(
-      1000/2,
+      1000 / 2,
       Swing.ActionListener { _ =>
-        this.text = recognizer.output
+        this.text = f"Recognition = ${recognizer.output_recognize}"
       }
     ).start()
   }
 
-  contents ++= Seq(button_recognize, label_output)
+  val label_output_database = new Label {
+    background = new java.awt.Color(0x33, 0x33, 0x33)
+    preferredSize = new Dimension(250, 100)
+    new Timer(
+      1000 / 2,
+      Swing.ActionListener { _ =>
+        this.text = f"Closest Match = ${recognizer.output_database}"
+      }
+    ).start()
+  }
+
+  contents ++= Seq(
+    button_recognize,
+    label_output_recognize,
+    label_output_database
+  )
 }
