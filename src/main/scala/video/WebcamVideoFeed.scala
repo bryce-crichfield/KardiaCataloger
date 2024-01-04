@@ -16,7 +16,9 @@ import scala.util.Try
 // TODO: figure out why a single instantiation of the webcam
 // requires ~450 MB
 class WebcamVideoFeed extends VideoFeed {
-    private val peer = new OpenCVFrameGrabber(0)
+    // find the first webcam
+
+    private val peer = new OpenCVFrameGrabber(-1)
     private val imageQueue = new LinkedBlockingDeque[BufferedImage]()
     peer.start()
 

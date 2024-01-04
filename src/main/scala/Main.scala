@@ -21,7 +21,6 @@ object Main extends SwingApplication {
     val morpholizer = new MorphologyVideoProcessor(processingService)
     val denoiseVideoProcessor = new DenoiseVideoProcessor(processingService)
     val processedFeed = new ProcessedVideoFeed(webcam, processingService, transformVideoProcessor, posterizer, morpholizer, denoiseVideoProcessor)
-//    val processedFeed = new ProcessedVideoFeed(webcam, posterizer, morpholizer, transformVideoProcessor, denoiseVideoProcessor)
     val database = new Database("resource/clean.json")
     val recognizer = new Recognizer(processedFeed, database)
 

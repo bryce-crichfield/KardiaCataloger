@@ -78,6 +78,8 @@ object ImageKernel {
         val sourcePointer = Array(source.getLines().mkString)
         val program = clCreateProgramWithSource(context, 1, sourcePointer, null, null)
         clBuildProgram(program, 0, null, null, null, null)
+
+
         val kernel = clCreateKernel(program, "main", null)
 
         source.close()
