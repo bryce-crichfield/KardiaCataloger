@@ -5,5 +5,6 @@ import java.awt.image.BufferedImage
 import scala.concurrent.{Future, Promise}
 
 trait VideoFeed {
-    def getFrame(): Future[BufferedImage]
+    def pollFrame(): Future[BufferedImage]
+    def takeFrame(): Future[BufferedImage]
 }

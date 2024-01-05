@@ -12,8 +12,8 @@ import scala.swing.event._
 class PosterizeControlPanel(posterizer: PosterizeVideoProcessor) extends BoxPanel(Orientation.Vertical) {
     border = TitledBorder(EtchedBorder(Raised), "Posterize Module")
 
-    val sliderAlpha = Controls.makeSlider("Alpha")(value => posterizer.alpha = value.toInt)
-    val sliderBeta = Controls.makeSlider("Beta")(value => posterizer.beta = value.toInt)
+    val sliderAlpha = Controls.makeSlider("Alpha")(value => posterizer.alpha = value)
+    val sliderBeta = Controls.makeSlider("Beta")(value => posterizer.beta = value)
 
 
     val toggleEnable = new ToggleButton("On/Off") {

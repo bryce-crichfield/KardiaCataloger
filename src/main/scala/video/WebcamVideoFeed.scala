@@ -44,13 +44,23 @@ class WebcamVideoFeed extends VideoFeed {
 
     timer.start()
 
-    override def getFrame(): Future[BufferedImage] = Future {
+    override def pollFrame(): Future[BufferedImage] = Future {
         // if there is a head in the queue, return a copy of it without removing it
         // otherwise, block until there is a head in the queue
 
         val head = imageQueue.take()
         val copy = head.copy()
         imageQueue.putFirst(head)
+        copy
+    }
+
+    override def takeFrame(): Future[BufferedImage] = Future {
+        // if there is a head in the queue, return a copy of it and remove it
+        // otherwise, block until there is a head in the queue
+
+        val head = imageQueue.take()
+        val copy = head.copy()
+        head.flush()
         copy
     }
 

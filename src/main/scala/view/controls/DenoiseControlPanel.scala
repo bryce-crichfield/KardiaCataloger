@@ -17,55 +17,16 @@ class DenoiseControlPanel(denoise: DenoiseVideoProcessor) extends BoxPanel(Orien
         }
     }
 
-    val comboPatchSize = new Label("Patch Size") -> new ComboBox[Int](Seq(5, 15, 25, 35)) {
-        listenTo(selection)
-        reactions += { case _: SelectionChanged =>
-            denoise.patchSize = selection.item
-        }
-    }
+    val sliderPatchSize = Controls.makeSlider("Patch Size", 1 to 15)(value => denoise.patchSize = (value * 15).toInt)
+    val sliderWindowSize = Controls.makeSlider("Window Size", 1 to 15)(value => denoise.windowSize = (value * 15).toInt)
+    val sliderSigma = Controls.makeSlider("Sigma")(value => denoise.sigma = value.toFloat)
+    val sliderH = Controls.makeSlider("H")(value => denoise.h = value.toFloat)
 
-    val comboWindowSize = new Label("Window Size") -> new ComboBox[Int](Seq(5, 15, 25, 35)) {
-        listenTo(selection)
-        reactions += { case _: SelectionChanged =>
-            denoise.windowSize = selection.item
-        }
-    }
 
-    val comboFilterStrength = new Label("Filter Strength") -> new ComboBox[Int](Seq(5, 15, 25, 35)) {
-        listenTo(selection)
-        reactions += { case _: SelectionChanged =>
-            denoise.filterStrength = selection.item
-        }
-    }
-
-    val comboBoxes = List(comboPatchSize, comboWindowSize, comboFilterStrength)
-
+    val sliders = List(sliderPatchSize, sliderWindowSize, sliderSigma, sliderH)
 
     contents += toggleEnable
 
-    contents += new GridBagPanel() {
-        for (row <- 0 until comboBoxes.length) {
-            val (label, combo) = comboBoxes(row)
-
-            // the 1st column is all labels and should be 25% of the width
-            add(label, new Constraints() {
-                gridx = 0
-                gridy = row
-                weightx = 0.25
-                anchor = Anchor.West
-                insets = new Insets(5, 5, 5, 5)
-            })
-
-            // the 2nd column is all sliders and should be 75% of the width
-            add(combo, new Constraints() {
-                gridx = 1
-                gridy = row
-                weightx = 0.75
-                fill = Fill.Horizontal
-                insets = new Insets(5, 5, 5, 5)
-            })
-        }
-    }
-
+    contents += Controls.makeLabelGrid(sliders)
 
 }

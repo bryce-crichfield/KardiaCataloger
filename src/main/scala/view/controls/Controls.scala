@@ -9,42 +9,23 @@ import scala.swing._
 import scala.swing.event.ValueChanged
 
 object Controls {
-    def controlPanel(posterize: PosterizeVideoProcessor, morphology: MorphologyVideoProcessor, denoise: DenoiseVideoProcessor, transform: TransformVideoProcessor, recognize: Recognizer): Component = new ScrollPane() {
-        contents = new BoxPanel(Orientation.Vertical) {
-            contents += new TransformControlPanel(transform)
-            contents += VStrut(10)
-            contents += new PosterizeControlPanel(posterize)
-            contents += VStrut(10)
-            contents += new MorphologyControlPanel(morphology)
-            contents += VStrut(10)
-            contents += new DenoiseControlPanel(denoise)
-            contents += VStrut(10)
-            contents += new RecognizerControlPanel(recognize)
 
-            maximumSize = new Dimension(300, Short.MaxValue)
-        }
-
-        // increase scroll speed
-        peer.getVerticalScrollBar.setUnitIncrement(16)
-
-    }
-
-    def makeSlider(text: String)(f: Double => Unit): (Label, Component) = {
+    def makeSlider(text: String, range: Range)(f: Double => Unit): (Label, Component) = {
         val label = new Label(text)
 
         val panel = new BoxPanel(Orientation.Horizontal) {
             val slider = new Slider() {
                 preferredSize = new Dimension(50, 35)
 
-                min = 1
-                max = 255
-                value = 128
-                reactions += { case _: ValueChanged => f(value / 255.0)
+                min = range.min
+                max = range.max
+                value = range.max / 2
+                reactions += { case _: ValueChanged => f(value / range.max.toDouble)
                 }
             }
 
             val label = new Label {
-                val getText = () => f"${slider.value / 255.0}%1.2f"
+                val getText = () => f"${slider.value / range.max.toDouble}%1.2f"
                 text = getText()
                 listenTo(slider)
                 reactions += { case _: ValueChanged => text = getText()
@@ -57,6 +38,10 @@ object Controls {
         }
 
         (label, panel)
+    }
+
+    def makeSlider(text: String)(f: Double => Unit): (Label, Component) = {
+        makeSlider(text, 1 to 255)(f)
     }
 
     def makeLabelGrid(components: List[(Label, Component)]): Component = {

@@ -9,8 +9,16 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, Promise}
 
 class ProcessedVideoFeed(input: VideoFeed, service: ImageProcessingService, processors: VideoProcessor*) extends VideoFeed {
-    override def getFrame(): Future[BufferedImage] = {
-        val frame = Await.result(input.getFrame(), Duration.Inf)
+    override def pollFrame(): Future[BufferedImage] = {
+        val frame = Await.result(input.pollFrame(), Duration.Inf)
+        processors.foreach(_.enqueue())
+        service.execute(frame)
+
+        Future.successful(frame)
+    }
+
+    override def takeFrame(): Future[BufferedImage] = {
+        val frame = Await.result(input.takeFrame(), Duration.Inf)
         processors.foreach(_.enqueue())
         service.execute(frame)
 

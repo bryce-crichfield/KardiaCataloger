@@ -8,6 +8,7 @@ import org.jocl._
 
 import java.awt.image.BufferedImage
 import java.util.concurrent.LinkedBlockingQueue
+import scala.util.Try
 
 class ImageProcessingService {
     CL.setExceptionsEnabled(true)
@@ -65,7 +66,7 @@ class ImageProcessingService {
         kernelQueue.put(kernel)
     }
 
-    def execute(image: BufferedImage): Unit = {
+    def execute(image: BufferedImage): Unit = Try {
         val imageFormat = new cl_image_format()
         imageFormat.image_channel_data_type = CL_UNSIGNED_INT8
         imageFormat.image_channel_order = CL_RGBA
@@ -96,5 +97,5 @@ class ImageProcessingService {
             clReleaseMemObject(inputBuffer)
             clReleaseMemObject(outputBuffer)
         }
-    }
+    } .getOrElse(())
 }

@@ -13,8 +13,8 @@ class PosterizeVideoProcessor(val service: ImageProcessingService) extends Video
     private val kernel = ImageKernel.load("/posterize.cl", service.context).get
 
     var enabled: Boolean = false
-    var alpha: Int = 1
-    var beta: Int = 1
+    var alpha: Double = 1
+    var beta: Double = 1
     var invert: Boolean = false
 
     def enqueue(): Unit = {
@@ -22,8 +22,8 @@ class PosterizeVideoProcessor(val service: ImageProcessingService) extends Video
             return Future.successful(())
         }
 
-        kernel.setArgInt(0, alpha)
-        kernel.setArgInt(1, beta)
+        kernel.setArgInt(0, (alpha * 255).toInt)
+        kernel.setArgInt(1, (beta * 255).toInt)
         kernel.setArgInt(2, Util.toInt(invert))
         service.enqueue(kernel)
     }

@@ -5,11 +5,12 @@ import model.Database
 import processing._
 import video.{ProcessedVideoFeed, WebcamVideoFeed}
 import view._
-import view.controls.Controls
+import view.controls.{Controls, DenoiseControlPanel, MorphologyControlPanel, PosterizeControlPanel, RecognizerControlPanel, TransformControlPanel}
 
 import com.formdev.flatlaf.FlatDarkLaf
 
 import javax.swing.UIManager
+import scala.swing.Swing.VStrut
 import scala.swing._
 
 object Main extends SwingApplication {
@@ -17,10 +18,10 @@ object Main extends SwingApplication {
 
     val webcam = new WebcamVideoFeed()
     val transformVideoProcessor = new TransformVideoProcessor(processingService)
+    val denoiseVideoProcessor = new DenoiseVideoProcessor(processingService)
     val posterizer = new PosterizeVideoProcessor(processingService)
     val morpholizer = new MorphologyVideoProcessor(processingService)
-    val denoiseVideoProcessor = new DenoiseVideoProcessor(processingService)
-    val processedFeed = new ProcessedVideoFeed(webcam, processingService, transformVideoProcessor, posterizer, morpholizer, denoiseVideoProcessor)
+    val processedFeed = new ProcessedVideoFeed(webcam, processingService, transformVideoProcessor,posterizer, denoiseVideoProcessor, morpholizer)
     val database = new Database("resource/clean.json")
     val recognizer = new Recognizer(processedFeed, database)
 
@@ -49,15 +50,27 @@ object Main extends SwingApplication {
             contents += new VideoFeedPanel(processedFeed, 30, "Filtered Feed")
         }
 
+        val controlPanel = new ScrollPane() {
+            contents = new BoxPanel(Orientation.Vertical) {
+                contents += new TransformControlPanel(transformVideoProcessor)
+                contents += VStrut(10)
+                contents += new PosterizeControlPanel(posterizer)
+                contents += VStrut(10)
+                contents += new DenoiseControlPanel(denoiseVideoProcessor)
+                contents += VStrut(10)
+                contents += new MorphologyControlPanel(morpholizer)
+                contents += VStrut(10)
+                contents += new RecognizerControlPanel(recognizer)
 
-        val videoAndControlPanel = new SplitPane(Orientation.Vertical, videoPanel,
-            Controls.controlPanel(
-                posterizer,
-                morpholizer,
-                denoiseVideoProcessor,
-                transformVideoProcessor,
-                recognizer
-            )) {
+                maximumSize = new Dimension(300, Short.MaxValue)
+            }
+
+            // increase scroll speed
+            peer.getVerticalScrollBar.setUnitIncrement(16)
+
+        }
+
+        val videoAndControlPanel = new SplitPane(Orientation.Vertical, videoPanel, controlPanel) {
             dividerLocation = 400
         }
 
@@ -71,7 +84,7 @@ object Main extends SwingApplication {
     }
 
     override def shutdown(): Unit = {
-//        processedFeed.close()
+        // kill the webcam thread
         webcam.close()
     }
 }
